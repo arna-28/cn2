@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Modify the Decode Button Logic
- document.getElementById('decode').onclick = function () {
+    document.getElementById('decode').onclick = function () {
         debugger; // Add breakpoint at the beginning
         console.log("Decode function called");
 
@@ -476,9 +476,8 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Decoding is only supported for .txt files at this time.");
         }
     };
-
-console.log("Decode button onclick handler attached"); //Log after attachment
-
+    console.log("Decode button onclick handler attached"); // Add this line
+}); // Closing DOMContentLoaded
 
 /// Function for the Steps
 function onclickChanges(message, step) {

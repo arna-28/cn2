@@ -1,301 +1,299 @@
-
-// Min Heap Implementation
+/// Min Heap Implementation
 class MinHeap {
-	constructor() {
-		this.heap_array = [];
-	}
+    constructor() {
+        this.heap_array = [];
+    }
 
-	/// Returns size of the min heap
-	size() {
-		return this.heap_array.length;
-	}
+    /// Returns size of the min heap
+    size() {
+        return this.heap_array.length;
+    }
 
-	/// Returns if the heap is empty
-	empty() {
-		return this.size() === 0;
-	}
+    /// Returns if the heap is empty
+    empty() {
+        return this.size() === 0;
+    }
 
-	/// Insert a new value in the heap
-	push(value) {
-		this.heap_array.push(value);
-		this.up_heapify();
-	}
+    /// Insert a new value in the heap
+    push(value) {
+        this.heap_array.push(value);
+        this.up_heapify();
+    }
 
-	/// Updates heap by up heapifying
-	up_heapify() {
-		let current_index = this.size() - 1;
-		while (current_index > 0) {
-			let current_element = this.heap_array[current_index];
-			let parent_index = Math.trunc((current_index - 1) / 2);
-			let parent_element = this.heap_array[parent_index];
+    /// Updates heap by up heapifying
+    up_heapify() {
+        let current_index = this.size() - 1;
+        while (current_index > 0) {
+            let current_element = this.heap_array[current_index];
+            let parent_index = Math.trunc((current_index - 1) / 2);
+            let parent_element = this.heap_array[parent_index];
 
-			if (parent_element[0] < current_element[0]) {
-				break;
-			} else {
-				this.heap_array[parent_index] = current_element;
-				this.heap_array[current_index] = parent_element;
-				current_index = parent_index;
-			}
-		}
-	}
+            if (parent_element[0] < current_element[0]) {
+                break;
+            } else {
+                this.heap_array[parent_index] = current_element;
+                this.heap_array[current_index] = parent_element;
+                current_index = parent_index;
+            }
+        }
+    }
 
-	/// Returns the top element (smallest value element)
-	top() {
-		return this.heap_array[0];
-	}
+    /// Returns the top element (smallest value element)
+    top() {
+        return this.heap_array[0];
+    }
 
-	/// Delete the top element
-	pop() {
-		if (!this.empty()) {
-			let last_index = this.size() - 1;
-			this.heap_array[0] = this.heap_array[last_index];
-			this.heap_array.pop();
-			this.down_heapify();
-		}
-	}
+    /// Delete the top element
+    pop() {
+        if (!this.empty()) {
+            let last_index = this.size() - 1;
+            this.heap_array[0] = this.heap_array[last_index];
+            this.heap_array.pop();
+            this.down_heapify();
+        }
+    }
 
-	/// Updates heap by down heapifying
-	down_heapify() {
-		let current_index = 0;
-		let current_element = this.heap_array[0];
-		while (current_index < this.size()) {
-			let child_index1 = (current_index * 2) + 1;
-			let child_index2 = (current_index * 2) + 2;
-			if (child_index1 >= this.size() && child_index2 >= this.size()) {
-				break;
-			} else if (child_index2 >= this.size()) {
-				let child_element1 = this.heap_array[child_index1];
-				if (current_element[0] < child_element1[0]) {
-					break;
-				} else {
-					this.heap_array[child_index1] = current_element;
-					this.heap_array[current_index] = child_element1;
-					current_index = child_index1;
-				}
-			} else {
-				let child_element1 = this.heap_array[child_index1];
-				let child_element2 = this.heap_array[child_index2];
-				if (current_element[0] < child_element1[0] && current_element[0] < child_element2[0]) {
-					break;
-				} else {
-					if (child_element1[0] < child_element2[0]) {
-						this.heap_array[child_index1] = current_element;
-						this.heap_array[current_index] = child_element1;
-						current_index = child_index1;
-					} else {
-						this.heap_array[child_index2] = current_element;
-						this.heap_array[current_index] = child_element2;
-						current_index = child_index2;
-					}
-				}
-			}
-		}
-	}
+    /// Updates heap by down heapifying
+    down_heapify() {
+        let current_index = 0;
+        let current_element = this.heap_array[0];
+        while (current_index < this.size()) {
+            let child_index1 = (current_index * 2) + 1;
+            let child_index2 = (current_index * 2) + 2;
+            if (child_index1 >= this.size() && child_index2 >= this.size()) {
+                break;
+            } else if (child_index2 >= this.size()) {
+                let child_element1 = this.heap_array[child_index1];
+                if (current_element[0] < child_element1[0]) {
+                    break;
+                } else {
+                    this.heap_array[child_index1] = current_element;
+                    this.heap_array[current_index] = child_element1;
+                    current_index = child_index1;
+                }
+            } else {
+                let child_element1 = this.heap_array[child_index1];
+                let child_element2 = this.heap_array[child_index2];
+                if (current_element[0] < child_element1[0] && current_element[0] < child_element2[0]) {
+                    break;
+                } else {
+                    if (child_element1[0] < child_element2[0]) {
+                        this.heap_array[child_index1] = current_element;
+                        this.heap_array[current_index] = child_element1;
+                        current_index = child_index1;
+                    } else {
+                        this.heap_array[child_index2] = current_element;
+                        this.heap_array[current_index] = child_element2;
+                        current_index = child_index2;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /// Coder Decoder Class
 class Codec {
-	constructor() {
-		this.codes = {};
-	}
+    constructor() {
+        this.codes = {};
+    }
 
-	/// DFS to generate codes
-	getCodes(node, curr_code) {
-		if (typeof node[1] === "string") {
-			this.codes[node[1]] = curr_code;
-			return;
-		}
-		this.getCodes(node[1][0], curr_code + '0');
-		this.getCodes(node[1][1], curr_code + '1');
-	}
+    /// DFS to generate codes
+    getCodes(node, curr_code) {
+        if (typeof node[1] === "string") {
+            this.codes[node[1]] = curr_code;
+            return;
+        }
+        this.getCodes(node[1][0], curr_code + '0');
+        this.getCodes(node[1][1], curr_code + '1');
+    }
 
-	/// Make the Huffman tree into a string
-	make_string(node) {
-		if (typeof node[1] === "string") {
-			return "'" + node[1];
-		}
-		return '0' + this.make_string(node[1][0]) + '1' + this.make_string(node[1][1]);
-	}
+    /// Make the Huffman tree into a string
+    make_string(node) {
+        if (typeof node[1] === "string") {
+            return "'" + node[1];
+        }
+        return '0' + this.make_string(node[1][0]) + '1' + this.make_string(node[1][1]);
+    }
 
-	/// Make string into Huffman tree
-	make_tree(tree_string) {
-		let node = [];
-		if (tree_string[this.index] === "'") {
-			this.index++;
-			node.push(tree_string[this.index]);
-			this.index++;
-			return node;
-		}
-		this.index++;
-		node.push(this.make_tree(tree_string)); // Left child
-		this.index++;
-		node.push(this.make_tree(tree_string)); // Right child
-		return node;
-	}
+    /// Make string into Huffman tree
+    make_tree(tree_string) {
+        let node = [];
+        if (tree_string[this.index] === "'") {
+            this.index++;
+            node.push(tree_string[this.index]);
+            this.index++;
+            return node;
+        }
+        this.index++;
+        node.push(this.make_tree(tree_string)); // Left child
+        this.index++;
+        node.push(this.make_tree(tree_string)); // Right child
+        return node;
+    }
 
-	/// Encoder function
-	encode(data) {
-		this.heap = new MinHeap();
-		let mp = new Map();
+    /// Encoder function
+    encode(data) {
+        this.heap = new MinHeap();
+        let mp = new Map();
 
-		for (let i = 0; i < data.length; i++) {
-			if (mp.has(data[i])) {
-				mp.set(data[i], mp.get(data[i]) + 1);
-			} else {
-				mp.set(data[i], 1);
-			}
-		}
+        for (let i = 0; i < data.length; i++) {
+            if (mp.has(data[i])) {
+                mp.set(data[i], mp.get(data[i]) + 1);
+            } else {
+                mp.set(data[i], 1);
+            }
+        }
 
-		if (mp.size === 0) {
-			let final_string = "zer#";
-			let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
-			return [final_string, output_message];
-		}
+        if (mp.size === 0) {
+            let final_string = "zer#";
+            let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
+            return [final_string, output_message];
+        }
 
-		if (mp.size === 1) {
-			let key, value;
-			for (let [k, v] of mp) {
-				key = k;
-				value = v;
-			}
-			let final_string = "one" + '#' + key + '#' + value.toString();
-			let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
-			return [final_string, output_message];
-		}
+        if (mp.size === 1) {
+            let key, value;
+            for (let [k, v] of mp) {
+                key = k;
+                value = v;
+            }
+            let final_string = "one" + '#' + key + '#' + value.toString();
+            let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
+            return [final_string, output_message];
+        }
 
-		for (let [key, value] of mp) {
-			this.heap.push([value, key]);
-		}
+        for (let [key, value] of mp) {
+            this.heap.push([value, key]);
+        }
 
-		while (this.heap.size() >= 2) {
-			let min_node1 = this.heap.top();
-			this.heap.pop();
-			let min_node2 = this.heap.top();
-			this.heap.pop();
-			this.heap.push([min_node1[0] + min_node2[0], [min_node1, min_node2]]);
-		}
+        while (this.heap.size() >= 2) {
+            let min_node1 = this.heap.top();
+            this.heap.pop();
+            let min_node2 = this.heap.top();
+            this.heap.pop();
+            this.heap.push([min_node1[0] + min_node2[0], [min_node1, min_node2]]);
+        }
 
-		let huffman_tree = this.heap.top();
-		this.heap.pop();
-		this.codes = {};
-		this.getCodes(huffman_tree, "");
+        let huffman_tree = this.heap.top();
+        this.heap.pop();
+        this.codes = {};
+        this.getCodes(huffman_tree, "");
 
-		let binary_string = "";
-		for (let i = 0; i < data.length; i++) {
-			binary_string += this.codes[data[i]];
-		}
+        let binary_string = "";
+        for (let i = 0; i < data.length; i++) {
+            binary_string += this.codes[data[i]];
+        }
 
-		let padding_length = (8 - (binary_string.length % 8)) % 8;
-		for (let i = 0; i < padding_length; i++) {
-			binary_string += '0';
-		}
+        let padding_length = (8 - (binary_string.length % 8)) % 8;
+        for (let i = 0; i < padding_length; i++) {
+            binary_string += '0';
+        }
 
-		let encoded_data = "";
-		for (let i = 0; i < binary_string.length;) {
-			let curr_num = 0;
-			for (let j = 0; j < 8; j++, i++) {
-				curr_num *= 2;
-				curr_num += binary_string[i] - '0';
-			}
-			encoded_data += String.fromCharCode(curr_num);
-		}
+        let encoded_data = "";
+        for (let i = 0; i < binary_string.length;) {
+            let curr_num = 0;
+            for (let j = 0; j < 8; j++, i++) {
+                curr_num *= 2;
+                curr_num += binary_string[i] - '0';
+            }
+            encoded_data += String.fromCharCode(curr_num);
+        }
 
-		let tree_string = this.make_string(huffman_tree);
-		let ts_length = tree_string.length;
-		let final_string = ts_length.toString() + '#' + padding_length.toString() + '#' + tree_string + encoded_data;
-		let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
-		return [final_string, output_message];
-	}
+        let tree_string = this.make_string(huffman_tree);
+        let ts_length = tree_string.length;
+        let final_string = ts_length.toString() + '#' + padding_length.toString() + '#' + tree_string + encoded_data;
+        let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
+        return [final_string, output_message];
+    }
 
-	/// Decoder function
-	decode(data) {
-		let k = 0;
-		let temp = "";
-		while (data[k] != '#') {
-			temp += data[k];
-			k++;
-		}
+    /// Decoder function
+    decode(data) {
+        let k = 0;
+        let temp = "";
+        while (data[k] != '#') {
+            temp += data[k];
+            k++;
+        }
 
-		if (temp === "zer") {
-			let decoded_data = "";
-			let output_message = "Decompression complete and file downloading....";
-			return [decoded_data, output_message];
-		}
+        if (temp === "zer") {
+            let decoded_data = "";
+            let output_message = "Decompression complete and file downloading....";
+            return [decoded_data, output_message];
+        }
 
-		if (temp === "one") {
-			data = data.slice(k + 1);
-			k = 0;
-			temp = "";
-			while (data[k] != '#') {
-				temp += data[k];
-				k++;
-			}
-			let one_char = temp;
-			data = data.slice(k + 1);
-			let str_len = parseInt(data);
-			let decoded_data = "";
-			for (let i = 0; i < str_len; i++) {
-				decoded_data += one_char;
-			}
-			let output_message = "Decompression complete and file downloading....";
-			return [decoded_data, output_message];
-		}
+        if (temp === "one") {
+            data = data.slice(k + 1);
+            k = 0;
+            temp = "";
+            while (data[k] != '#') {
+                temp += data[k];
+                k++;
+            }
+            let one_char = temp;
+            data = data.slice(k + 1);
+            let str_len = parseInt(data);
+            let decoded_data = "";
+            for (let i = 0; i < str_len; i++) {
+                decoded_data += one_char;
+            }
+            let output_message = "Decompression complete and file downloading....";
+            return [decoded_data, output_message];
+        }
 
-		data = data.slice(k + 1);
-		let ts_length = parseInt(temp);
-		k = 0;
-		temp = "";
-		while (data[k] != '#') {
-			temp += data[k];
-			k++;
-		}
-		data = data.slice(k + 1);
-		let padding_length = parseInt(temp);
-		temp = "";
-		for (k = 0; k < ts_length; k++) {
-			temp += data[k];
-		}
-		data = data.slice(k);
-		let tree_string = temp;
-		temp = "";
-		for (k = 0; k < data.length; k++) {
-			temp += data[k];
-		}
-		let encoded_data = temp;
-		this.index = 0;
-		let huffman_tree = this.make_tree(tree_string);
+        data = data.slice(k + 1);
+        let ts_length = parseInt(temp);
+        k = 0;
+        temp = "";
+        while (data[k] != '#') {
+            temp += data[k];
+            k++;
+        }
+        data = data.slice(k + 1);
+        let padding_length = parseInt(temp);
+        temp = "";
+        for (k = 0; k < ts_length; k++) {
+            temp += data[k];
+        }
+        data = data.slice(k);
+        let tree_string = temp;
+        temp = "";
+        for (k = 0; k < data.length; k++) {
+            temp += data[k];
+        }
+        let encoded_data = temp;
+        this.index = 0;
+        let huffman_tree = this.make_tree(tree_string);
+        let binary_string = "";
+        for (let i = 0; i < encoded_data.length; i++) {
+            let curr_num = encoded_data.charCodeAt(i);
+            let curr_binary = "";
+            for (let j = 7; j >= 0; j--) {
+                let foo = curr_num >> j;
+                curr_binary = curr_binary + (foo & 1);
+            }
+            binary_string += curr_binary;
+        }
 
-		let binary_string = "";
-		for (let i = 0; i < encoded_data.length; i++) {
-			let curr_num = encoded_data.charCodeAt(i);
-			let curr_binary = "";
-			for (let j = 7; j >= 0; j--) {
-				let foo = curr_num >> j;
-				curr_binary = curr_binary + (foo & 1);
-			}
-			binary_string += curr_binary;
-		}
+        binary_string = binary_string.slice(0, -padding_length);
 
-		binary_string = binary_string.slice(0, -padding_length);
+        let decoded_data = "";
+        let node = huffman_tree;
+        for (let i = 0; i < binary_string.length; i++) {
+            if (binary_string[i] === '1') {
+                node = node[1];
+            } else {
+                node = node[0];
+            }
 
-		let decoded_data = "";
-		let node = huffman_tree;
-		for (let i = 0; i < binary_string.length; i++) {
-			if (binary_string[i] === '1') {
-				node = node[1];
-			} else {
-				node = node[0];
-			}
+            if (typeof node[0] === "string") {
+                decoded_data += node[0];
+                node = huffman_tree;
+            }
+        }
 
-			if (typeof node[0] === "string") {
-				decoded_data += node[0];
-				node = huffman_tree;
-			}
-		}
-
-		let output_message = "Decompression complete and file downloading....";
-		return [decoded_data, output_message];
-	}
+        let output_message = "Decompression complete and file downloading....";
+        return [decoded_data, output_message];
+    }
 }
 
 /// Onload Function
@@ -307,53 +305,38 @@ document.addEventListener('DOMContentLoaded', function () {
     const step3 = document.getElementById("step3");
     const codecObj = new Codec();
 
-    // Function to handle the submit button click
-    function handleSubmitClick() {
-        const uploadedFile = document.getElementById('uploadfile').files[0]; // Get the file input element
-        if (uploadedFile === undefined) {
-            alert("No file uploaded.\nPlease upload a valid file and try again!");
-            return;
-        }
-
-        const extension = uploadedFile.name.split('.').pop().toLowerCase();
-        if (extension === 'txt' || extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-            alert("File submitted!");
-            isSubmitted = true;
-            onclickChanges("Done!! File uploaded!", step1);
-            if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-                document.getElementById("imageCompressionOptions").style.display = "block";
-            } else {
-                document.getElementById("imageCompressionOptions").style.display = "none";
-            }
-        } else {
-            alert("Invalid file type (." + extension + ") \nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
-        }
-    }
-
-    // Attach the event listener to the submit button
-    const submitButton = document.getElementById('submitbtn');
-    if (submitButton) {
-        submitButton.onclick = handleSubmitClick;
-    } else {
-        console.error("Submit button not found!");
-    }
-
-    document.getElementById('qualitySlider').oninput = function () {
-        document.getElementById('qualityValue').innerText = document.getElementById('qualitySlider').value;
-    };
-
-    // Modify the Encode Button Logic
-    const encodeButton = document.getElementById('encode');
-    if (encodeButton) {
-        encodeButton.onclick = function () {
-            const uploadFileElement = document.getElementById('uploadfile'); // Get the file input element
-            if (!uploadFileElement) {
-                console.error("Upload file element not found!");
-                alert("Error: Upload file element not found. Please ensure the page is fully loaded.");
+    // Defer event listener assignments
+    setTimeout(function () {
+        // Modify the Submit Button Logic
+        document.getElementById('submitbtn').onclick = function () {
+            const uploadedFile = document.getElementById('uploadfile').files[0];
+            if (uploadedFile === undefined) {
+                alert("No file uploaded.\nPlease upload a valid file and try again!");
                 return;
             }
 
-            const uploadedFile = uploadFileElement.files[0];
+            const extension = uploadedFile.name.split('.').pop().toLowerCase();
+            if (extension === 'txt' || extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+                alert("File submitted!");
+                isSubmitted = true;
+                onclickChanges("Done!! File uploaded!", step1);
+                if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+                    document.getElementById("imageCompressionOptions").style.display = "block";
+                } else {
+                    document.getElementById("imageCompressionOptions").style.display = "none";
+                }
+            } else {
+                alert("Invalid file type (." + extension + ") \nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
+            }
+        };
+
+        document.getElementById('qualitySlider').oninput = function () {
+            document.getElementById('qualityValue').innerText = document.getElementById('qualitySlider').value;
+        };
+
+        // Modify the Encode Button Logic
+        document.getElementById('encode').onclick = function () {
+            const uploadedFile = document.getElementById('uploadfile').files[0];
             if (uploadedFile === undefined) {
                 alert("No file uploaded.\nPlease upload a file and try again!");
                 return;
@@ -405,20 +388,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
             }
         };
-    } else {
-        console.error("Encode button not found!");
-    }
-    // Modify the Decode Button Logic
-    const decodeButton = document.getElementById('decode');
-    if (decodeButton) {
-          decodeButton.onclick = function () {
-            const uploadFileElement = document.getElementById('uploadfile');
-            if (!uploadFileElement) {
-                console.error("Upload file element not found!");
-                alert("Error: Upload file element not found. Please ensure the page is fully loaded.");
-                return;
-            }
-            const uploadedFile = uploadFileElement.files[0];
+
+        // Modify the Decode Button Logic
+        document.getElementById('decode').onclick = function () {
+            const uploadedFile = document.getElementById('uploadfile').files[0];
             if (uploadedFile === undefined) {
                 alert("No file uploaded.\nPlease upload a file and try again!");
                 return;
@@ -446,61 +419,58 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
             }
         };
-    } else {
-        console.error("Decode button not found!");
-    }
+    }, 0); // Delay of 0 milliseconds
 });
-
 
 /// Function to update the DOM when step 1 is complete
 function onclickChanges(firstMsg, step) {
-	step.innerHTML = "";
-	let img = document.createElement("img");
-	img.src = "done_icon3.png";
-	img.id = "doneImg";
-	step.appendChild(img);
-	let br = document.createElement("br");
-	step.appendChild(br);
-	let msg = document.createElement("span");
-	msg.className = "text2";
-	msg.innerHTML = firstMsg;
-	step.appendChild(msg);
+    step.innerHTML = "";
+    let img = document.createElement("img");
+    img.src = "done_icon3.png";
+    img.id = "doneImg";
+    step.appendChild(img);
+    let br = document.createElement("br");
+    step.appendChild(br);
+    let msg = document.createElement("span");
+    msg.className = "text2";
+    msg.innerHTML = firstMsg;
+    step.appendChild(msg);
 }
 
 /// Function to update the DOM when step 2 is complete
 function onclickChanges2(secMsg, word) {
-	document.getElementById('encode').disabled = true;
-	document.getElementById('decode').disabled = true;
-	step3.innerHTML = "";
-	let msg2 = document.createElement("span");
-	msg2.className = "text2";
-	msg2.innerHTML = secMsg;
-	step3.appendChild(msg2);
-	let msg3 = document.createElement("span");
-	msg3.className = "text2";
-	msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
-	step3.appendChild(msg3);
+    document.getElementById('encode').disabled = true;
+    document.getElementById('decode').disabled = true;
+    step3.innerHTML = "";
+    let msg2 = document.createElement("span");
+    msg2.className = "text2";
+    msg2.innerHTML = secMsg;
+    step3.appendChild(msg2);
+    let msg3 = document.createElement("span");
+    msg3.className = "text2";
+    msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
+    step3.appendChild(msg3);
 }
 
 /// Function to download the file
 function myDownloadFile(fileName, text) {
-	let a = document.createElement('a');
-	a.href = "data:application/octet-stream," + encodeURIComponent(text);
-	a.download = fileName;
-	a.click();
+    let a = document.createElement('a');
+    a.href = "data:application/octet-stream," + encodeURIComponent(text);
+    a.download = fileName;
+    a.click();
 }
 
 /// Function to update the DOM when the file is downloaded
 function ondownloadChanges(outputMsg) {
-	step3.innerHTML = "";
-	let img = document.createElement("img");
-	img.src = "done_icon3.png";
-	img.id = "doneImg";
-	step3.appendChild(img);
-	let br = document.createElement("br");
-	step3.appendChild(br);
-	let msg3 = document.createElement("span");
-	msg3.className = "text2";
-	msg3.innerHTML = outputMsg;
-	step3.appendChild(msg3);
+    step3.innerHTML = "";
+    let img = document.createElement("img");
+    img.src = "done_icon3.png";
+    img.id = "doneImg";
+    step3.appendChild(img);
+    let br = document.createElement("br");
+    step3.appendChild(br);
+    let msg3 = document.createElement("span");
+    msg3.className = "text2";
+    msg3.innerHTML = outputMsg;
+    step3.appendChild(msg3);
 }

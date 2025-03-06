@@ -300,126 +300,130 @@ class Codec {
 
 /// Onload Function
 document.addEventListener('DOMContentLoaded', function () {
-	// Global Variables
-	let isSubmitted = false;
-	const step1 = document.getElementById("step1");
-	const step2 = document.getElementById("step2");
-	const step3 = document.getElementById("step3");
-	const codecObj = new Codec();
+    // Global Variables
+    let isSubmitted = false;
+    const step1 = document.getElementById("step1");
+    const step2 = document.getElementById("step2");
+    const step3 = document.getElementById("step3");
+    const codecObj = new Codec();
 
-	// Modify the Submit Button Logic
-	document.getElementById('submitbtn').onclick = function () {
-		const uploadedFile = document.getElementById('uploadfile').files[0];
-		if (uploadedFile === undefined) {
-			alert("No file uploaded.\nPlease upload a valid file and try again!");
-			return;
-		}
+    // Function to handle the submit button click
+    function handleSubmitClick() {
+        const uploadedFile = document.getElementById('uploadfile').files[0]; // Get the file input element
+        if (uploadedFile === undefined) {
+            alert("No file uploaded.\nPlease upload a valid file and try again!");
+            return;
+        }
 
-		const extension = uploadedFile.name.split('.').pop().toLowerCase();
-		if (extension === 'txt' || extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-			alert("File submitted!");
-			isSubmitted = true;
-			onclickChanges("Done!! File uploaded!", step1);
-			if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-				document.getElementById("imageCompressionOptions").style.display = "block";
-			} else {
-				document.getElementById("imageCompressionOptions").style.display = "none";
-			}
-		} else {
-			alert("Invalid file type (." + extension + ") \nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
-		}
-	};
+        const extension = uploadedFile.name.split('.').pop().toLowerCase();
+        if (extension === 'txt' || extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+            alert("File submitted!");
+            isSubmitted = true;
+            onclickChanges("Done!! File uploaded!", step1);
+            if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+                document.getElementById("imageCompressionOptions").style.display = "block";
+            } else {
+                document.getElementById("imageCompressionOptions").style.display = "none";
+            }
+        } else {
+            alert("Invalid file type (." + extension + ") \nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
+        }
+    }
 
-	document.getElementById('qualitySlider').oninput = function () {
-		document.getElementById('qualityValue').innerText = document.getElementById('qualitySlider').value;
-	};
+    // Attach the event listener to the submit button
+    document.getElementById('submitbtn').onclick = handleSubmitClick;
 
-	// Modify the Encode Button Logic
-	document.getElementById('encode').onclick = function () {
-		const uploadedFile = document.getElementById('uploadfile').files[0];
-		if (uploadedFile === undefined) {
-			alert("No file uploaded.\nPlease upload a file and try again!");
-			return;
-		}
-		if (isSubmitted === false) {
-			alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
-			return;
-		}
+    document.getElementById('qualitySlider').oninput = function () {
+        document.getElementById('qualityValue').innerText = document.getElementById('qualitySlider').value;
+    };
 
-		const extension = uploadedFile.name.split('.').pop().toLowerCase();
-		if (extension === 'txt') {
-			onclickChanges("Done!! Your file will be Compressed", step2);
-			onclickChanges2("Compressing your file ...", "Compressed");
-			const fileReader = new FileReader();
-			fileReader.onload = function (fileLoadedEvent) {
-				const text = fileLoadedEvent.target.result;
-				const [encodedString, outputMsg] = codecObj.encode(text);
-				myDownloadFile(uploadedFile.name.split('.')[0] + "_compressed.txt", encodedString);
-				ondownloadChanges(outputMsg);
-			};
-			fileReader.readAsText(uploadedFile, "UTF-8");
-		} else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-			onclickChanges("Done!! Your image will be Compressed", step2);
-			onclickChanges2("Compressing your image ...", "Compressed");
-			const quality = parseFloat(document.getElementById('qualitySlider').value);
-			const fileReader = new FileReader();
-			fileReader.onload = function (fileLoadedEvent) {
-				const img = new Image();
-				img.src = fileLoadedEvent.target.result;
-				img.onload = function () {
-					const canvas = document.createElement('canvas');
-					const ctx = canvas.getContext('2d');
-					canvas.width = img.width;
-					canvas.height = img.height;
-					ctx.drawImage(img, 0, 0);
-					canvas.toBlob(function (blob) {
-						const url = URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.href = url;
-						a.download = uploadedFile.name.split('.')[0] + "_compressed." + extension;
-						a.click();
-						URL.revokeObjectURL(url);
-						ondownloadChanges("Compression complete and image downloading....");
-					}, 'image/jpeg', quality);
-				};
-			};
-			fileReader.readAsDataURL(uploadedFile);
-		} else {
-			alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
-		}
-	};
+    // Modify the Encode Button Logic
+    document.getElementById('encode').onclick = function () {
+        const uploadedFile = document.getElementById('uploadfile').files[0];
+        if (uploadedFile === undefined) {
+            alert("No file uploaded.\nPlease upload a file and try again!");
+            return;
+        }
+        if (isSubmitted === false) {
+            alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
+            return;
+        }
 
-	// Modify the Decode Button Logic
-	document.getElementById('decode').onclick = function () {
-		const uploadedFile = document.getElementById('uploadfile').files[0];
-		if (uploadedFile === undefined) {
-			alert("No file uploaded.\nPlease upload a file and try again!");
-			return;
-		}
-		if (isSubmitted === false) {
-			alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
-			return;
-		}
+        const extension = uploadedFile.name.split('.').pop().toLowerCase();
+        if (extension === 'txt') {
+            onclickChanges("Done!! Your file will be Compressed", step2);
+            onclickChanges2("Compressing your file ...", "Compressed");
+            const fileReader = new FileReader();
+            fileReader.onload = function (fileLoadedEvent) {
+                const text = fileLoadedEvent.target.result;
+                const [encodedString, outputMsg] = codecObj.encode(text);
+                myDownloadFile(uploadedFile.name.split('.')[0] + "_compressed.txt", encodedString);
+                ondownloadChanges(outputMsg);
+            };
+            fileReader.readAsText(uploadedFile, "UTF-8");
+        } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+            onclickChanges("Done!! Your image will be Compressed", step2);
+            onclickChanges2("Compressing your image ...", "Compressed");
+            const quality = parseFloat(document.getElementById('qualitySlider').value);
+            const fileReader = new FileReader();
+            fileReader.onload = function (fileLoadedEvent) {
+                const img = new Image();
+                img.src = fileLoadedEvent.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    canvas.toBlob(function (blob) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = uploadedFile.name.split('.')[0] + "_compressed." + extension;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        ondownloadChanges("Compression complete and image downloading....");
+                    }, 'image/jpeg', quality);
+                };
+            };
+            fileReader.readAsDataURL(uploadedFile);
+        } else {
+            alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
+        }
+    };
 
-		const extension = uploadedFile.name.split('.').pop().toLowerCase();
-		if (extension === 'txt') {
-			onclickChanges("Done!! Your file will be Decompressed", step2);
-			onclickChanges2("Decompressing your file ...", "Decompressed");
-			const fileReader = new FileReader();
-			fileReader.onload = function (fileLoadedEvent) {
-				const text = fileLoadedEvent.target.result;
-				const [decodedString, outputMsg] = codecObj.decode(text);
-				myDownloadFile(uploadedFile.name.split('.')[0] + "_decompressed.txt", decodedString);
-				ondownloadChanges(outputMsg);
-			};
-			fileReader.readAsText(uploadedFile, "UTF-8");
-		} else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-			alert("Decompression for images is not supported in this version.");
-		} else {
-			alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
-		}
-	};
+    // Modify the Decode Button Logic
+    document.getElementById('decode').onclick = function () {
+        const uploadedFile = document.getElementById('uploadfile').files[0];
+        if (uploadedFile === undefined) {
+            alert("No file uploaded.\nPlease upload a file and try again!");
+            return;
+        }
+        if (isSubmitted === false) {
+            alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
+            return;
+        }
+
+        const extension = uploadedFile.name.split('.').pop().toLowerCase();
+        if (extension === 'txt') {
+            onclickChanges("Done!! Your file will be Decompressed", step2);
+            onclickChanges2("Decompressing your file ...", "Decompressed");
+            const fileReader = new FileReader();
+            fileReader.onload = function (fileLoadedEvent) {
+                const text = fileLoadedEvent.target.result;
+                const [decodedString, outputMsg] = codecObj.decode(text);
+                myDownloadFile(uploadedFile.name.split('.')[0] + "_decompressed.txt", decodedString);
+                ondownloadChanges(outputMsg);
+            };
+            fileReader.readAsText(uploadedFile, "UTF-8");
+        } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+            alert("Decompression for images is not supported in this version.");
+        } else {
+            alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
+        }
+    };
 });
+
 
 /// Function to update the DOM when step 1 is complete
 function onclickChanges(firstMsg, step) {

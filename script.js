@@ -432,51 +432,51 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Modify the Decode Button Logic
-document.getElementById('decode').onclick = function () {
-    debugger; // Add breakpoint at the beginning
+ document.getElementById('decode').onclick = function () {
+        debugger; // Add breakpoint at the beginning
+        console.log("Decode function called");
 
-    console.log("Decode function called"); // Add logging
+        const uploadFileElement = document.getElementById('uploadfile');
 
-    const uploadFileElement = document.getElementById('uploadfile');
+        if (!uploadFileElement) {
+            console.error("Error: uploadfile element not found!");
+            alert("Critical Error: File upload element is missing. Please refresh the page.");
+            return;
+        }
 
-    if (!uploadFileElement) {
-        console.error("Error: uploadfile element not found!");
-        alert("Critical Error: File upload element is missing. Please refresh the page.");
-        return;
-    }
+        const uploadedFile = uploadFileElement.files[0];
 
-    const uploadedFile = uploadFileElement.files[0];
+        if (uploadedFile === undefined) {
+            alert("No file uploaded.\nPlease upload a file and try again!");
+            return;
+        }
 
-    if (uploadedFile === undefined) {
-        alert("No file uploaded.\nPlease upload a file and try again!");
-        return;
-    }
+        if (isSubmitted === false) {
+            alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
+            return;
+        }
 
-    if (isSubmitted === false) {
-        alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
-        return;
-    }
+        onclickChanges("Decompressing...", step2);
+        const extension = uploadedFile.name.split('.').pop().toLowerCase();
 
-    onclickChanges("Decompressing...", step2);
-    const extension = uploadedFile.name.split('.').pop().toLowerCase();
+        if (extension === 'txt') {
+            onclickChanges("Done!! Your file will be De-Compressed", step2);
+            onclickChanges2("De-Compressing your file ...", "De-Compressed");
+            const fileReader = new FileReader();
 
-    if (extension === 'txt') {
-        onclickChanges("Done!! Your file will be De-Compressed", step2);
-        onclickChanges2("De-Compressing your file ...", "De-Compressed");
-        const fileReader = new FileReader();
+            fileReader.onload = function (fileLoadedEvent) {
+                const text = fileLoadedEvent.target.result;
+                const [decodedString, outputMsg] = codecObj.decode(text);
+                myDownloadFile(uploadedFile.name.split('.')[0] + "_decompressed.txt", decodedString);
+                ondownloadChanges(outputMsg);
+            };
+            fileReader.readAsText(uploadedFile, "UTF-8");
 
-        fileReader.onload = function (fileLoadedEvent) {
-            const text = fileLoadedEvent.target.result;
-            const [decodedString, outputMsg] = codecObj.decode(text);
-            myDownloadFile(uploadedFile.name.split('.')[0] + "_decompressed.txt", decodedString);
-            ondownloadChanges(outputMsg);
-        };
-        fileReader.readAsText(uploadedFile, "UTF-8");
+        } else {
+            alert("Decoding is only supported for .txt files at this time.");
+        }
+    };
 
-    } else {
-        alert("Decoding is only supported for .txt files at this time.");
-    }
-};
 console.log("Decode button onclick handler attached"); //Log after attachment
 
 

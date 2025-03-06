@@ -433,26 +433,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modify the Decode Button Logic
     document.getElementById('decode').onclick = function () {
-        const uploadFileElement = document.getElementById('uploadfile'); // Get the element first
-    if (!uploadFileElement) {
-        console.error("Error: uploadfile element not found!"); // Log an error
-        alert("Critical Error: File upload element is missing. Please refresh the page."); // Alert user
-        return; // Stop further execution
-    }
-        const uploadedFile = document.getElementById('uploadfile').files[0];
+        const uploadFileElement = document.getElementById('uploadfile');
+        if (!uploadFileElement) {
+            console.error("Error: uploadfile element not found!");
+            alert("Critical Error: File upload element is missing. Please refresh the page.");
+            return;
+        }
+
+        const uploadedFile = uploadFileElement.files[0];
+
         if (uploadedFile === undefined) {
             alert("No file uploaded.\nPlease upload a file and try again!");
             return;
         }
+
         if (isSubmitted === false) {
             alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
+            return;
         }
 
+        onclickChanges("Decompressing...", step2);
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
+
         if (extension === 'txt') {
-            onclickChanges("Done!! Your file will be Decompressed", step2);
-            onclickChanges2("Decompressing your file ...", "Decompressed");
+            onclickChanges("Done!! Your file will be De-Compressed", step2);
+            onclickChanges2("De-Compressing your file ...", "De-Compressed");
             const fileReader = new FileReader();
+
             fileReader.onload = function (fileLoadedEvent) {
                 const text = fileLoadedEvent.target.result;
                 const [decodedString, outputMsg] = codecObj.decode(text);
@@ -460,63 +467,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 ondownloadChanges(outputMsg);
             };
             fileReader.readAsText(uploadedFile, "UTF-8");
-        } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-            alert("Decompression for images is not supported in this version.");
+
         } else {
-            alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
+            alert("Decoding is only supported for .txt files at this time.");
         }
     };
 });
 
-/// Function to update the DOM when step 1 is complete
-function onclickChanges(firstMsg, step) {
-    step.innerHTML = "";
-    let img = document.createElement("img");
-    img.src = "done_icon3.png";
-    img.id = "doneImg";
-    step.appendChild(img);
-    let br = document.createElement("br");
-    step.appendChild(br);
-    let msg = document.createElement("span");
-    msg.className = "text2";
-    msg.innerHTML = firstMsg;
-    step.appendChild(msg);
+/// Function for the Steps
+function onclickChanges(message, step) {
+    step.innerHTML = "<br>" + message + "<br>";
 }
 
-/// Function to update the DOM when step 2 is complete
-function onclickChanges2(secMsg, word) {
-    document.getElementById('encode').disabled = true;
-    document.getElementById('decode').disabled = true;
-    step3.innerHTML = "";
-    let msg2 = document.createElement("span");
-    msg2.className = "text2";
-    msg2.innerHTML = secMsg;
-    step3.appendChild(msg2);
-    let msg3 = document.createElement("span");
-    msg3.className = "text2";
-    msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
-    step3.appendChild(msg3);
+/// Function for the Output messages
+function ondownloadChanges(message) {
+    document.getElementById("text4").innerHTML = "<br>" + message + "<br>" + "<button type=\"button\" class=\"btn btn-success\" onclick=\"location.reload()\">Click Here</button> to Start Again!";
 }
 
-/// Function to download the file
-function myDownloadFile(fileName, text) {
-    let a = document.createElement('a');
-    a.href = "data:application/octet-stream," + encodeURIComponent(text);
-    a.download = fileName;
-    a.click();
+function onclickChanges2(message, type) {
+    document.getElementById("heading").innerHTML = message;
+    document.getElementById("heading").style.color = "Green";
+    document.getElementById("heading").style.fontSize = "50px";
 }
 
-/// Function to update the DOM when the file is downloaded
-function ondownloadChanges(outputMsg) {
-    step3.innerHTML = "";
-    let img = document.createElement("img");
-    img.src = "done_icon3.png";
-    img.id = "doneImg";
-    step3.appendChild(img);
-    let br = document.createElement("br");
-    step3.appendChild(br);
-    let msg3 = document.createElement("span");
-    msg3.className = "text2";
-    msg3.innerHTML = outputMsg;
-    step3.appendChild(msg3);
+/// Download File Function
+function myDownloadFile(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }

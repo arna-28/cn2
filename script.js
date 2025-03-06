@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             };
             fileReader.readAsDataURL(uploadedFile);
-        } else {
+            } else {
             alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
         }
     };
@@ -476,8 +476,9 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Decoding is only supported for .txt files at this time.");
         }
     };
-    console.log("Decode button onclick handler attached"); // Add this line
-}); // Closing DOMContentLoaded
+    console.log("Decode button onclick handler attached");
+});
+
 
 /// Function for the Steps
 function onclickChanges(message, step) {

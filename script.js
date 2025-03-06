@@ -433,6 +433,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modify the Decode Button Logic
     document.getElementById('decode').onclick = function () {
+        const uploadFileElement = document.getElementById('uploadfile'); // Get the element first
+    if (!uploadFileElement) {
+        console.error("Error: uploadfile element not found!"); // Log an error
+        alert("Critical Error: File upload element is missing. Please refresh the page."); // Alert user
+        return; // Stop further execution
+    }
         const uploadedFile = document.getElementById('uploadfile').files[0];
         if (uploadedFile === undefined) {
             alert("No file uploaded.\nPlease upload a file and try again!");

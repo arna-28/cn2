@@ -1,8 +1,6 @@
-// Initial debug logs
 console.log("DOM ready state:", document.readyState);
 console.log("Upload element:", document.getElementById('uploadfile'));
 console.log("Encode button:", document.getElementById('encode'));
-
 // Min Heap Implementation
 class MinHeap {
     constructor() {
@@ -330,15 +328,20 @@ class Codec {
 // Main DOM Content Loaded Handler
 document.addEventListener('DOMContentLoaded', function() {
     // Global Variables
-    let isSubmitted = false;
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
     const step3 = document.getElementById("step3");
     const codecObj = new Codec();
+    let isSubmitted = false;
 
-    // Submit Button Logic
+    // Submit Button
     document.getElementById('submitbtn').addEventListener('click', function() {
-        const uploadedFile = document.getElementById('uploadfile').files[0];
+        const fileInput = document.getElementById('uploadfile');
+        if (!fileInput || !fileInput.files[0]) {
+            alert("Please select a file first!");
+            return;
+        }
+        const uploadedFile = fileInput.files[0];
         if (!uploadedFile) {
             alert("No file uploaded.\nPlease upload a valid file and try again!");
             return;
@@ -365,12 +368,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Encode Button
-    document.getElementById('encode').addEventListener('click', function() {
-        const uploadedFile = document.getElementById('uploadfile').files[0];
-        if (!uploadedFile) {
+     document.getElementById('encode').addEventListener('click', function() {
+        const fileInput = document.getElementById('uploadfile');
+        
+        // 1. Verify element exists
+        if (!fileInput) {
+            console.error("uploadfile element not found!");
+            alert("System error: File input not found");
+            return;
+        }
+        
+        // 2. Verify file selected
+        if (!fileInput.files || fileInput.files.length === 0) {
             alert("Please select a file first!");
             return;
         }
+        
+        const uploadedFile = fileInput.files[0];
+        console.log("Processing file:", uploadedFile.name);
 
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
         if (extension === 'txt') {
@@ -439,13 +454,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Decode Button
-    document.getElementById('decode').addEventListener('click', function() {
-        const uploadedFile = document.getElementById('uploadfile').files[0];
-        if (!uploadedFile) {
+     document.getElementById('decode').addEventListener('click', function() {
+        const fileInput = document.getElementById('uploadfile');
+        if (!fileInput?.files?.[0]) { // Modern optional chaining
             alert("Please select a file first!");
             return;
         }
-
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
         if (extension === 'txt') {
             onclickChanges("Done!! Your file will be Decompressed", step2);

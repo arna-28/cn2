@@ -42,11 +42,26 @@
             <button type="button" id="decode" class="btn btn-success">DE-COMPRESS</button>
             <br>
             <!-- Image Compression Slider -->
-            <div id="imageCompressionOptions" style="display: none;">
-                <label for="qualitySlider">Select Compression Quality (0 = Low, 1 = High):</label>
-                <input type="range" id="qualitySlider" min="0" max="1" step="0.1" value="0.8">
-                <span id="qualityValue">0.8</span>
+           <div id="imageCompressionOptions" style="display: none;">
+    <label for="qualitySlider">Quality (0=low, 1=high):</label>
+    <input type="range" id="qualitySlider" min="0" max="1" step="0.1" value="0.8">
+    <span id="qualityValue">0.8</span>
+    
+    <!-- Add this preview container -->
+    <div class="preview-container" style="margin-top: 20px;">
+        <h4>Live Preview</h4>
+        <div style="display: flex; gap: 20px;">
+            <div>
+                <p>Original</p>
+                <img id="originalPreview" style="max-width: 300px; border: 1px solid #ccc;">
             </div>
+            <div>
+                <p>Compressed</p>
+                <img id="compressedPreview" style="max-width: 300px; border: 1px solid #ccc;">
+            </div>
+        </div>
+    </div>
+</div>
         </div>
         <h2 class="align">STEP 3: SIT BACK AND RELAX</h2>
         <div class="align" id="step3">

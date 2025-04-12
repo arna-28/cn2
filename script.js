@@ -434,6 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Modify the Decode Button Logic
+    // Modify the Decode Button Logic
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('decode')?.addEventListener('click', function() {
             const file = document.getElementById('uploadfile').files[0];
@@ -441,26 +442,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert("Please select a file first!");
                 return;
             }
-        const extension = uploadedFile.name.split('.').pop().toLowerCase();
-        if (extension === 'txt') {
-            onclickChanges("Done!! Your file will be Decompressed", step2);
-            onclickChanges2("Decompressing your file ...", "Decompressed");
-            const fileReader = new FileReader();
-            fileReader.onload = function (fileLoadedEvent) {
-                const text = fileLoadedEvent.target.result;
-                const [decodedString, outputMsg] = codecObj.decode(text);
-                myDownloadFile(uploadedFile.name.split('.')[0] + "_decompressed.txt", decodedString);
-                ondownloadChanges(outputMsg);
-            };
-            fileReader.readAsText(uploadedFile, "UTF-8");
-        } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-            alert("Decompression for images is not supported in this version.");
-        } else {
-            alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
-        }
-    });
-});
+            const extension = file.name.split('.').pop().toLowerCase();
+            if (extension === 'txt') {
+                onclickChanges("Done!! Your file will be Decompressed", step2);
+                onclickChanges2("Decompressing your file ...", "Decompressed");
+                const fileReader = new FileReader();
+                fileReader.onload = function (fileLoadedEvent) {
+                    const text = fileLoadedEvent.target.result;
+                    const [decodedString, outputMsg] = codecObj.decode(text);
+                    myDownloadFile(file.name.split('.')[0] + "_decompressed.txt", decodedString);
+                    ondownloadChanges(outputMsg);
+                };
+                fileReader.readAsText(file, "UTF-8");
+            } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+                alert("Decompression for images is not supported in this version.");
+            } else {
+                alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
+            }
+        });
+    }); // This was missing
+}); // This is the correct closing bracket for the initial DOMContentLoaded event
 
+// Remove this extra bracket that was at the end of your original code
+// } 
 /// Function to update the DOM when step 1 is complete
 function onclickChanges(firstMsg, step) {
     step.innerHTML = "";

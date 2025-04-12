@@ -377,7 +377,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Modify the Encode Button Logic
-    document.getElementById('encode').onclick = function () {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('encode').addEventListener('click', function() {
         const uploadedFile = document.getElementById('uploadfile').files[0];
         if (!uploadedFile) {
             alert("No file uploaded.\nPlease upload a file and try again!");
@@ -429,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
         }
-    };
+        });});
 
     // Modify the Decode Button Logic
     document.getElementById('decode').onclick = function () {

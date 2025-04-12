@@ -1,7 +1,14 @@
 // Min Heap Implementation
-console.log("DOM ready state:", document.readyState);
-console.log("Upload element:", document.getElementById('uploadfile'));
-console.log("Encode button:", document.getElementById('encode'));
+console.log("=== DEBUGGING START ===");
+console.log("[1] Script loading - DOM readyState:", document.readyState);
+console.log("[2] uploadfile exists:", !!document.getElementById('uploadfile'));
+console.log("[3] encode button exists:", !!document.getElementById('encode'));
+
+// 2. DOMContentLoaded wrapper (Wrap ALL your existing code)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("[4] DOM fully loaded - rechecking elements:");
+    console.log("uploadfile:", document.getElementById('uploadfile'));
+    console.log("encode button:", document.getElementById('encode'));
 class MinHeap {
     constructor() {
         this.heap_array = [];
@@ -517,4 +524,13 @@ function ondownloadChanges(outputMsg) {
     msg3.className = "text2";
     msg3.innerHTML = outputMsg;
     step3.appendChild(msg3);
+}
+    if (!document.getElementById('uploadfile')) {
+    console.log("[5] Setting up mutation observer...");
+    new MutationObserver((mutations, obs) => {
+        if (document.getElementById('uploadfile')) {
+            console.log("[6] uploadfile dynamically appeared!");
+            obs.disconnect();
+        }
+    }).observe(document.body, { childList: true, subtree: true });
 }

@@ -330,7 +330,18 @@ class Codec {
 
 // Main Application Initialization
 function initializeApp() {
-    function initializeApp() {
+     const qualityControls = [
+        'qualitySlider',
+        'qualityValue',
+        'imageCompressionOptions'
+    ];
+    
+    const missingControls = qualityControls.filter(id => !document.getElementById(id));
+    
+    if (missingControls.length > 0) {
+        console.error("Missing quality controls:", missingControls);
+        // Don't fail completely, just log the error
+    }
     // Verify all UI elements exist first
     const requiredElements = [
         'uploadfile', 'encode', 'decode', 'submitbtn',
@@ -493,10 +504,27 @@ function handleTextCompression(file, step2, step3, codecObj) {
 
 // Image Compression Handler
 function handleImageCompression(file, extension, step2, step3) {
+    // Verify all required elements exist
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityValue = document.getElementById('qualityValue');
+    
+    if (!qualitySlider || !qualityValue) {
+        console.error("Quality control elements missing:", {qualitySlider, qualityValue});
+        alert("System error: Quality controls not found");
+        return;
+    }
+
+    if (!step2 || !step3) {
+        console.error("Step elements missing:", {step2, step3});
+        return;
+    }
+
     onclickChanges("Done!! Your image will be Compressed", step2);
     onclickChanges2("Compressing your image...", "Compressed", step3);
     
-    const quality = parseFloat(document.getElementById('qualitySlider').value);
+    const quality = parseFloat(qualitySlider.value);
+    qualityValue.textContent = quality; // Update displayed value
+    
     const fileReader = new FileReader();
     
     fileReader.onload = function(e) {
@@ -529,7 +557,6 @@ function handleImageCompression(file, extension, step2, step3) {
     fileReader.onerror = () => alert("Error reading image file");
     fileReader.readAsDataURL(file);
 }
-
 // Text Decompression Handler
 function handleTextDecompression(file, step2, step3, codecObj) {
     onclickChanges("Done!! Your file will be Decompressed", step2);

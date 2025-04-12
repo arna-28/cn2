@@ -381,16 +381,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modify the Encode Button Logic
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('encode').addEventListener('click', function() {
-        const uploadedFile = document.getElementById('uploadfile').files[0];
-        if (!uploadedFile) {
-            alert("No file uploaded.\nPlease upload a file and try again!");
-            return;
-        }
-        if (isSubmitted === false) {
-            alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
-            return;
-        }
+        document.getElementById('encode')?.addEventListener('click', function() {
+            const file = document.getElementById('uploadfile').files[0];
+            if (!file) {
+                alert("Please select a file first!");
+                return;
+            }
 
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
         if (extension === 'txt') {
@@ -433,19 +429,18 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
         }
-        });});
+        });
+        onclickChanges("Done!! Your file will be Compressed", step2);
+    });
 
     // Modify the Decode Button Logic
-    document.getElementById('decode').onclick = function () {
-        const uploadedFile = document.getElementById('uploadfile').files[0];
-        if (uploadedFile === undefined) {
-            alert("No file uploaded.\nPlease upload a file and try again!");
-            return;
-        }
-        if (isSubmitted === false) {
-            alert("File not submitted.\nPlease click the submit button on the previous step\nto submit the file and try again!");
-        }
-
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('decode')?.addEventListener('click', function() {
+            const file = document.getElementById('uploadfile').files[0];
+            if (!file) {
+                alert("Please select a file first!");
+                return;
+            }
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
         if (extension === 'txt') {
             onclickChanges("Done!! Your file will be Decompressed", step2);
@@ -463,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
         }
-    };
+    });
 });
 
 /// Function to update the DOM when step 1 is complete

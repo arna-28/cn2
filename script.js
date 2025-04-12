@@ -330,6 +330,24 @@ class Codec {
 
 // Main Application Initialization
 function initializeApp() {
+    function initializeApp() {
+    // Verify all UI elements exist first
+    const requiredElements = [
+        'uploadfile', 'encode', 'decode', 'submitbtn',
+        'step1', 'step2', 'step3', 'qualitySlider',
+        'qualityValue', 'imageCompressionOptions'
+    ];
+    
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+        console.error("Missing elements:", missingElements);
+        alert(`System error: Missing UI components (${missingElements.join(', ')}). Please refresh.`);
+        return;
+    }
+    
+    // ... rest of initialization ...
+}
     console.log("Initializing application...");
     
     // Cache DOM elements
@@ -390,23 +408,30 @@ function initializeApp() {
     });
 
     // Encode Button
-    encodeBtn.addEventListener('click', function() {
-        if (!isSubmitted) {
-            alert("Please submit a file first!");
+   encodeBtn.addEventListener('click', function() {
+    if (!isSubmitted) {
+        alert("Please submit a file first!");
+        return;
+    }
+
+    const uploadedFile = fileInput.files[0];
+    if (!uploadedFile) {
+        alert("Please select a file first!");
+        return;
+    }
+
+    const extension = uploadedFile.name.split('.').pop().toLowerCase();
+    
+    if (extension === 'txt') {
+        // Ensure we pass the correct step elements
+        const step2 = document.getElementById("step2");
+        const step3 = document.getElementById("step3");
+        if (!step2 || !step3) {
+            alert("System error: UI components missing");
             return;
         }
-
-        const uploadedFile = fileInput.files[0];
-        if (!uploadedFile) {
-            alert("Please select a file first!");
-            return;
-        }
-
-        const extension = uploadedFile.name.split('.').pop().toLowerCase();
-        
-        if (extension === 'txt') {
-            handleTextCompression(uploadedFile, step2, step3, codecObj);
-        } else if (['jpg', 'jpeg', 'png'].includes(extension)) {
+        handleTextCompression(uploadedFile, step2, step3, codecObj);
+    }  else if (['jpg', 'jpeg', 'png'].includes(extension)) {
             handleImageCompression(uploadedFile, extension, step2, step3);
         } else {
             alert("Invalid file type for compression");
@@ -438,6 +463,11 @@ function initializeApp() {
 
 // Text Compression Handler
 function handleTextCompression(file, step2, step3, codecObj) {
+    if (!step2 || !step3) {
+        console.error("Step elements not found");
+        return;
+    }
+    
     onclickChanges("Done!! Your file will be Compressed", step2);
     onclickChanges2("Compressing your file...", "Compressed", step3);
     
@@ -540,19 +570,26 @@ function onclickChanges(firstMsg, step) {
 }
 
 function onclickChanges2(secMsg, word, step3) {
-    document.getElementById('encode').disabled = true;
-    document.getElementById('decode').disabled = true;
+    // Safely disable buttons if they exist
+    const encodeBtn = document.getElementById('encode');
+    const decodeBtn = document.getElementById('decode');
     
-    step3.innerHTML = "";
-    let msg2 = document.createElement("span");
-    msg2.className = "text2";
-    msg2.innerHTML = secMsg;
-    step3.appendChild(msg2);
+    if (encodeBtn) encodeBtn.disabled = true;
+    if (decodeBtn) decodeBtn.disabled = true;
     
-    let msg3 = document.createElement("span");
-    msg3.className = "text2";
-    msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
-    step3.appendChild(msg3);
+    // Update step3 content
+    if (step3) {
+        step3.innerHTML = "";
+        let msg2 = document.createElement("span");
+        msg2.className = "text2";
+        msg2.innerHTML = secMsg;
+        step3.appendChild(msg2);
+        
+        let msg3 = document.createElement("span");
+        msg3.className = "text2";
+        msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
+        step3.appendChild(msg3);
+    }
 }
 
 function myDownloadFile(fileName, text) {

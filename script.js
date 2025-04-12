@@ -1,4 +1,7 @@
 // Min Heap Implementation
+console.log("DOM ready state:", document.readyState);
+console.log("Upload element:", document.getElementById('uploadfile'));
+console.log("Encode button:", document.getElementById('encode'));
 class MinHeap {
     constructor() {
         this.heap_array = [];

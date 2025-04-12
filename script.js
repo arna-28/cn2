@@ -417,28 +417,27 @@ function initializeApp() {
 
     // Submit Button
     submitBtn.addEventListener('click', function() {
-        if (!fileInput.files?.[0]) {
-            alert("Please select a file first!");
-            return;
-        }
-
-        const uploadedFile = fileInput.files[0];
-        const extension = uploadedFile.name.split('.').pop().toLowerCase();
+    if (!fileInput.files?.[0]) {
+        alert("Please select a file first!");
+        return;
+    }
+    const uploadedFile = fileInput.files[0];
+    const extension = uploadedFile.name.split('.').pop().toLowerCase();
+    if (['txt', 'jpg', 'jpeg', 'png'].includes(extension)) {
+        isSubmitted = true;
+        onclickChanges("Done!! File uploaded!", step1);
         
-        if (['txt', 'jpg', 'jpeg', 'png'].includes(extension)) {
-            alert("File submitted!");
-            isSubmitted = true;
-            onclickChanges("Done!! File uploaded!", step1);
-            
-            if (['jpg', 'jpeg', 'png'].includes(extension)) {
-                document.getElementById("imageCompressionOptions").style.display = "block";
-            } else {
-                document.getElementById("imageCompressionOptions").style.display = "none";
-            }
-        } else {
-            alert(`Invalid file type (.${extension}). Please upload a valid .txt, .jpg, .jpeg, or .png file.`);
+        // Show quality slider ONLY for images
+        const imageOptions = document.getElementById('imageCompressionOptions');
+        if (imageOptions) {
+            imageOptions.style.display = ['jpg', 'jpeg', 'png'].includes(extension) 
+                ? 'block' 
+                : 'none';
         }
-    });
+    } else {
+        alert(`Invalid file type (.${extension}). Please upload a valid file.`);
+    }
+});
 
     // Quality Slider
     document.getElementById('qualitySlider')?.addEventListener('input', function() {
@@ -531,57 +530,65 @@ function handleTextCompression(file, step2, step3, codecObj) {
 
 // Image Compression Handler
 function handleImageCompression(file, extension, step2, step3) {
-    // Verify all required elements exist
     const qualitySlider = document.getElementById('qualitySlider');
     const qualityValue = document.getElementById('qualityValue');
     
     if (!qualitySlider || !qualityValue) {
-        console.error("Quality control elements missing:", {qualitySlider, qualityValue});
-        alert("System error: Quality controls not found");
+        alert("Compression controls not loaded properly");
         return;
     }
 
-    if (!step2 || !step3) {
-        console.error("Step elements missing:", {step2, step3});
-        return;
-    }
-
-    onclickChanges("Done!! Your image will be Compressed", step2);
-    onclickChanges2("Compressing your image...", "Compressed", step3);
-    
     const quality = parseFloat(qualitySlider.value);
-    qualityValue.textContent = quality; // Update displayed value
+    qualityValue.textContent = quality.toFixed(1);
+
+    onclickChanges("Compressing image...", step2);
     
     const fileReader = new FileReader();
-    
     fileReader.onload = function(e) {
-        try {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            // Store original file size
+            const originalSize = file.size;
+            
+            canvas.toBlob(function(blob) {
+                if (!blob) {
+                    throw new Error("Compression failed");
+                }
                 
-                canvas.toBlob(function(blob) {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = file.name.split('.')[0] + "_compressed." + extension;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    ondownloadChanges("Compression complete and image downloading...", step3);
-                }, 'image/jpeg', quality);
-            };
-            img.onerror = () => alert("Error loading image");
-            img.src = e.target.result;
-        } catch (error) {
-            console.error("Image compression error:", error);
-            alert("Image compression failed: " + error.message);
-        }
+                // Calculate compression ratio
+                const compressedSize = blob.size;
+                const ratio = (compressedSize / originalSize).toFixed(2);
+                const percentReduction = ((1 - ratio) * 100).toFixed(1);
+                
+                // Create download
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${file.name.split('.')[0]}_compressed.${extension}`;
+                a.click();
+                
+                // Show results including compression ratio
+                ondownloadChanges(
+                    `Compression complete!<br>
+                     Original: ${formatBytes(originalSize)}<br>
+                     Compressed: ${formatBytes(compressedSize)}<br>
+                     Ratio: ${ratio}x (${percentReduction}% smaller)`,
+                    step3
+                );
+                
+                URL.revokeObjectURL(url);
+            }, `image/${extension === 'jpg' ? 'jpeg' : extension}`, quality);
+        };
+        img.onerror = () => alert("Error loading image");
+        img.src = e.target.result;
     };
-    fileReader.onerror = () => alert("Error reading image file");
+    fileReader.onerror = () => alert("Error reading file");
     fileReader.readAsDataURL(file);
 }
 // Text Decompression Handler
@@ -682,3 +689,10 @@ setTimeout(function() {
         initializeApp();
     }
 }, 1000);
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+}

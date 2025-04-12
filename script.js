@@ -525,12 +525,4 @@ function ondownloadChanges(outputMsg) {
     msg3.innerHTML = outputMsg;
     step3.appendChild(msg3);
 }
-    if (!document.getElementById('uploadfile')) {
-    console.log("[5] Setting up mutation observer...");
-    new MutationObserver((mutations, obs) => {
-        if (document.getElementById('uploadfile')) {
-            console.log("[6] uploadfile dynamically appeared!");
-            obs.disconnect();
-        }
-    }).observe(document.body, { childList: true, subtree: true });
-}
+

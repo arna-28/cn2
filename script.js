@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Modify the Encode Button Logic
     document.getElementById('encode').onclick = function () {
         const uploadedFile = document.getElementById('uploadfile').files[0];
-        if (uploadedFile === undefined) {
+        if (!uploadedFile) {
             alert("No file uploaded.\nPlease upload a file and try again!");
             return;
         }

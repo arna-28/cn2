@@ -133,6 +133,25 @@ h3 {
     margin: 15px auto;
 }
 
+.preview-container {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.preview-container h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.preview-container img {
+    max-height: 200px;
+    object-fit: contain;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
 #textImg,
 #doneImg,
 #optionsImg,

@@ -1,4 +1,31 @@
 // Debug logs at the start
+// Emergency DOM validation
+function validateDom() {
+    const requiredElements = [
+        'uploadfile', 'encode', 'decode', 'submitbtn',
+        'step1', 'step2', 'step3', 
+        'qualitySlider', 'qualityValue', 'imageCompressionOptions'
+    ];
+    
+    const missing = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missing.length > 0) {
+        console.error("CRITICAL: Missing elements:", missing);
+        document.body.innerHTML = `
+            <div style="color:red; padding:20px; font-family:Arial;">
+                <h2>Application Error</h2>
+                <p>Required components missing: ${missing.join(', ')}</p>
+                <p>Please:</p>
+                <ol>
+                    <li>Refresh the page</li>
+                    <li>Try a different browser</li>
+                    <li>Contact support if problem persists</li>
+                </ol>
+            </div>
+        `;
+        throw new Error("Missing DOM elements");
+    }
+}
 console.log("Initializing script...");
 console.log("DOM readyState:", document.readyState);
 console.log("Upload element exists:", !!document.getElementById('uploadfile'));
@@ -358,7 +385,7 @@ function initializeApp() {
     }
     
     // ... rest of initialization ...
-}
+
     console.log("Initializing application...");
     
     // Cache DOM elements

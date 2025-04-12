@@ -13,6 +13,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
     <script src='script.js' defer></script>
+    <script>
+    // Critical CSS to ensure elements exist before JS runs
+    document.write('<style>#imageCompressionOptions,#qualitySlider,#qualityValue{display:none}</style>');
+</script>
 </head>
 
 <body>

@@ -1,6 +1,9 @@
-console.log("DOM ready state:", document.readyState);
-console.log("Upload element:", document.getElementById('uploadfile'));
-console.log("Encode button:", document.getElementById('encode'));
+// Debug logs at the start
+console.log("Initializing script...");
+console.log("DOM readyState:", document.readyState);
+console.log("Upload element exists:", !!document.getElementById('uploadfile'));
+console.log("Encode button exists:", !!document.getElementById('encode'));
+
 // Min Heap Implementation
 class MinHeap {
     constructor() {
@@ -325,170 +328,199 @@ class Codec {
     }
 }
 
-// Main DOM Content Loaded Handler
-document.addEventListener('DOMContentLoaded', function() {
-    // Global Variables
+// Main Application Initialization
+function initializeApp() {
+    console.log("Initializing application...");
+    
+    // Cache DOM elements
+    const fileInput = document.getElementById('uploadfile');
+    const encodeBtn = document.getElementById('encode');
+    const decodeBtn = document.getElementById('decode');
+    const submitBtn = document.getElementById('submitbtn');
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
     const step3 = document.getElementById("step3");
     const codecObj = new Codec();
+    
+    // Verify all critical elements exist
+    if (!fileInput || !encodeBtn || !decodeBtn || !submitBtn || !step1 || !step2 || !step3) {
+        console.error("Missing critical elements:", {
+            fileInput,
+            encodeBtn,
+            decodeBtn,
+            submitBtn,
+            step1,
+            step2,
+            step3
+        });
+        alert("System error: Critical components failed to load. Please refresh the page.");
+        return;
+    }
+
     let isSubmitted = false;
 
     // Submit Button
-    document.getElementById('submitbtn').addEventListener('click', function() {
-        const fileInput = document.getElementById('uploadfile');
-        if (!fileInput || !fileInput.files[0]) {
+    submitBtn.addEventListener('click', function() {
+        if (!fileInput.files?.[0]) {
             alert("Please select a file first!");
             return;
         }
-        const uploadedFile = fileInput.files[0];
-        if (!uploadedFile) {
-            alert("No file uploaded.\nPlease upload a valid file and try again!");
-            return;
-        }
 
+        const uploadedFile = fileInput.files[0];
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
-        if (extension === 'txt' || extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+        
+        if (['txt', 'jpg', 'jpeg', 'png'].includes(extension)) {
             alert("File submitted!");
             isSubmitted = true;
             onclickChanges("Done!! File uploaded!", step1);
-            if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
+            
+            if (['jpg', 'jpeg', 'png'].includes(extension)) {
                 document.getElementById("imageCompressionOptions").style.display = "block";
             } else {
                 document.getElementById("imageCompressionOptions").style.display = "none";
             }
         } else {
-            alert("Invalid file type (." + extension + ") \nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
+            alert(`Invalid file type (.${extension}). Please upload a valid .txt, .jpg, .jpeg, or .png file.`);
         }
     });
 
     // Quality Slider
-    document.getElementById('qualitySlider').addEventListener('input', function() {
+    document.getElementById('qualitySlider')?.addEventListener('input', function() {
         document.getElementById('qualityValue').textContent = this.value;
     });
 
     // Encode Button
-     document.getElementById('encode').addEventListener('click', function() {
-        const fileInput = document.getElementById('uploadfile');
-        
-        // 1. Verify element exists
-        if (!fileInput) {
-            console.error("uploadfile element not found!");
-            alert("System error: File input not found");
+    encodeBtn.addEventListener('click', function() {
+        if (!isSubmitted) {
+            alert("Please submit a file first!");
             return;
         }
-        
-        // 2. Verify file selected
-        if (!fileInput.files || fileInput.files.length === 0) {
+
+        const uploadedFile = fileInput.files[0];
+        if (!uploadedFile) {
             alert("Please select a file first!");
             return;
         }
-        
-        const uploadedFile = fileInput.files[0];
-        console.log("Processing file:", uploadedFile.name);
 
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
+        
         if (extension === 'txt') {
-            onclickChanges("Done!! Your file will be Compressed", step2);
-            onclickChanges2("Compressing your file ...", "Compressed");
-            
-            const fileReader = new FileReader();
-            fileReader.onload = function(fileLoadedEvent) {
-                try {
-                    const text = fileLoadedEvent.target.result;
-                    const [encodedString, outputMsg] = codecObj.encode(text);
-                    myDownloadFile(uploadedFile.name.split('.')[0] + "_compressed.txt", encodedString);
-                    ondownloadChanges(outputMsg);
-                } catch (e) {
-                    console.error("Compression error:", e);
-                    alert("Compression failed: " + e.message);
-                }
-            };
-            fileReader.onerror = function() {
-                alert("Error reading file!");
-            };
-            fileReader.readAsText(uploadedFile, "UTF-8");
-            
-        } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-            onclickChanges("Done!! Your image will be Compressed", step2);
-            onclickChanges2("Compressing your image ...", "Compressed");
-            
-            const quality = parseFloat(document.getElementById('qualitySlider').value);
-            const fileReader = new FileReader();
-            fileReader.onload = function(fileLoadedEvent) {
-                try {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-                        canvas.toBlob(function(blob) {
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = uploadedFile.name.split('.')[0] + "_compressed." + extension;
-                            a.click();
-                            URL.revokeObjectURL(url);
-                            ondownloadChanges("Compression complete and image downloading....");
-                        }, 'image/jpeg', quality);
-                    };
-                    img.onerror = function() {
-                        alert("Error loading image!");
-                    };
-                    img.src = fileLoadedEvent.target.result;
-                } catch (e) {
-                    console.error("Image compression error:", e);
-                    alert("Image compression failed: " + e.message);
-                }
-            };
-            fileReader.onerror = function() {
-                alert("Error reading image file!");
-            };
-            fileReader.readAsDataURL(uploadedFile);
-            
+            handleTextCompression(uploadedFile, step2, step3, codecObj);
+        } else if (['jpg', 'jpeg', 'png'].includes(extension)) {
+            handleImageCompression(uploadedFile, extension, step2, step3);
         } else {
-            alert("Invalid file type for compression.\nPlease upload a valid .txt, .jpg, .jpeg, or .png file and try again!");
+            alert("Invalid file type for compression");
         }
     });
 
     // Decode Button
-     document.getElementById('decode').addEventListener('click', function() {
-        const fileInput = document.getElementById('uploadfile');
-        if (!fileInput?.files?.[0]) { // Modern optional chaining
+    decodeBtn.addEventListener('click', function() {
+        if (!isSubmitted) {
+            alert("Please submit a file first!");
+            return;
+        }
+
+        const uploadedFile = fileInput.files[0];
+        if (!uploadedFile) {
             alert("Please select a file first!");
             return;
         }
+
         const extension = uploadedFile.name.split('.').pop().toLowerCase();
+        
         if (extension === 'txt') {
-            onclickChanges("Done!! Your file will be Decompressed", step2);
-            onclickChanges2("Decompressing your file ...", "Decompressed");
-            
-            const fileReader = new FileReader();
-            fileReader.onload = function(fileLoadedEvent) {
-                try {
-                    const text = fileLoadedEvent.target.result;
-                    const [decodedString, outputMsg] = codecObj.decode(text);
-                    myDownloadFile(uploadedFile.name.split('.')[0] + "_decompressed.txt", decodedString);
-                    ondownloadChanges(outputMsg);
-                } catch (e) {
-                    console.error("Decompression error:", e);
-                    alert("Decompression failed: " + e.message);
-                }
-            };
-            fileReader.onerror = function() {
-                alert("Error reading file!");
-            };
-            fileReader.readAsText(uploadedFile, "UTF-8");
-            
-        } else if (extension === 'jpg' || extension === 'jpeg' || extension === 'png') {
-            alert("Decompression for images is not supported in this version.");
+            handleTextDecompression(uploadedFile, step2, step3, codecObj);
         } else {
-            alert("Invalid file type for decompression.\nPlease upload a valid .txt file and try again!");
+            alert("Decompression is only supported for .txt files");
         }
     });
-});
+}
+
+// Text Compression Handler
+function handleTextCompression(file, step2, step3, codecObj) {
+    onclickChanges("Done!! Your file will be Compressed", step2);
+    onclickChanges2("Compressing your file...", "Compressed", step3);
+    
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+        try {
+            const text = e.target.result;
+            console.log("Original text size:", text.length);
+            
+            const [encodedString, outputMsg] = codecObj.encode(text);
+            console.log("Compressed size:", encodedString.length);
+            
+            myDownloadFile(file.name.split('.')[0] + "_compressed.txt", encodedString);
+            ondownloadChanges(outputMsg, step3);
+        } catch (error) {
+            console.error("Compression error:", error);
+            alert("Compression failed: " + error.message);
+        }
+    };
+    fileReader.onerror = () => alert("Error reading file!");
+    fileReader.readAsText(file, "UTF-8");
+}
+
+// Image Compression Handler
+function handleImageCompression(file, extension, step2, step3) {
+    onclickChanges("Done!! Your image will be Compressed", step2);
+    onclickChanges2("Compressing your image...", "Compressed", step3);
+    
+    const quality = parseFloat(document.getElementById('qualitySlider').value);
+    const fileReader = new FileReader();
+    
+    fileReader.onload = function(e) {
+        try {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.name.split('.')[0] + "_compressed." + extension;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    ondownloadChanges("Compression complete and image downloading...", step3);
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = () => alert("Error loading image");
+            img.src = e.target.result;
+        } catch (error) {
+            console.error("Image compression error:", error);
+            alert("Image compression failed: " + error.message);
+        }
+    };
+    fileReader.onerror = () => alert("Error reading image file");
+    fileReader.readAsDataURL(file);
+}
+
+// Text Decompression Handler
+function handleTextDecompression(file, step2, step3, codecObj) {
+    onclickChanges("Done!! Your file will be Decompressed", step2);
+    onclickChanges2("Decompressing your file...", "Decompressed", step3);
+    
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+        try {
+            const text = e.target.result;
+            const [decodedString, outputMsg] = codecObj.decode(text);
+            
+            myDownloadFile(file.name.split('.')[0] + "_decompressed.txt", decodedString);
+            ondownloadChanges(outputMsg, step3);
+        } catch (error) {
+            console.error("Decompression error:", error);
+            alert("Decompression failed: " + error.message);
+        }
+    };
+    fileReader.onerror = () => alert("Error reading file!");
+    fileReader.readAsText(file, "UTF-8");
+}
 
 // UI Helper Functions
 function onclickChanges(firstMsg, step) {
@@ -497,22 +529,26 @@ function onclickChanges(firstMsg, step) {
     img.src = "done_icon3.png";
     img.id = "doneImg";
     step.appendChild(img);
+    
     let br = document.createElement("br");
     step.appendChild(br);
+    
     let msg = document.createElement("span");
     msg.className = "text2";
     msg.innerHTML = firstMsg;
     step.appendChild(msg);
 }
 
-function onclickChanges2(secMsg, word) {
+function onclickChanges2(secMsg, word, step3) {
     document.getElementById('encode').disabled = true;
     document.getElementById('decode').disabled = true;
+    
     step3.innerHTML = "";
     let msg2 = document.createElement("span");
     msg2.className = "text2";
     msg2.innerHTML = secMsg;
     step3.appendChild(msg2);
+    
     let msg3 = document.createElement("span");
     msg3.className = "text2";
     msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
@@ -526,16 +562,32 @@ function myDownloadFile(fileName, text) {
     a.click();
 }
 
-function ondownloadChanges(outputMsg) {
+function ondownloadChanges(outputMsg, step3) {
     step3.innerHTML = "";
     let img = document.createElement("img");
     img.src = "done_icon3.png";
     img.id = "doneImg";
     step3.appendChild(img);
+    
     let br = document.createElement("br");
     step3.appendChild(br);
+    
     let msg3 = document.createElement("span");
     msg3.className = "text2";
     msg3.innerHTML = outputMsg;
     step3.appendChild(msg3);
 }
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded, starting app...");
+    initializeApp();
+});
+
+// Fallback initialization in case DOMContentLoaded fails
+setTimeout(function() {
+    if (!document.getElementById('uploadfile')) {
+        console.warn("Fallback initialization after timeout");
+        initializeApp();
+    }
+}, 1000);

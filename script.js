@@ -1,3 +1,4 @@
+// Debug logs at the start
 console.log("Initializing script...");
 
 // Utility Functions
@@ -676,4 +677,4 @@ setTimeout(function() {
         console.warn("Fallback initialization");
         initializeApp();
     }
-}, 1000); 
+}, 1000);

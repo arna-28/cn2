@@ -185,7 +185,7 @@ class Codec {
 
         if (mp.size === 0) {
             let final_string = "zer#";
-            let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
+            let output_message = "Compression complete and file downloaded";
             return [final_string, output_message];
         }
 
@@ -196,7 +196,7 @@ class Codec {
                 value = v;
             }
             let final_string = "one" + '#' + key + '#' + value.toString();
-            let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
+            let output_message = "Compression complete and file downloaded";
             return [final_string, output_message];
         }
 
@@ -240,7 +240,7 @@ class Codec {
         let tree_string = this.make_string(huffman_tree);
         let ts_length = tree_string.length;
         let final_string = ts_length.toString() + '#' + padding_length.toString() + '#' + tree_string + encoded_data;
-        let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length / final_string.length);
+        let output_message = "Compression complete and file downloaded";
         return [final_string, output_message];
     }
 
@@ -254,7 +254,7 @@ class Codec {
 
         if (temp === "zer") {
             let decoded_data = "";
-            let output_message = "Decompression complete and file downloading....";
+            let output_message = "Decompression complete and file downloaded";
             return [decoded_data, output_message];
         }
 
@@ -273,7 +273,7 @@ class Codec {
             for (let i = 0; i < str_len; i++) {
                 decoded_data += one_char;
             }
-            let output_message = "Decompression complete and file downloading....";
+            let output_message = "Decompression complete and file downloaded";
             return [decoded_data, output_message];
         }
 
@@ -329,7 +329,7 @@ class Codec {
         }
 
         const rleDecodedData = this.rleDecode(decoded_data);
-        let output_message = "Decompression complete and file downloading....";
+        let output_message = "Decompression complete and file downloaded";
         return [rleDecodedData, output_message];
     }
 }
@@ -372,7 +372,7 @@ function onclickChanges2(secMsg, word, step3) {
         
         let msg3 = document.createElement("span");
         msg3.className = "text2";
-        msg3.innerHTML = " , " + word + " file will be downloaded automatically!";
+        msg3.innerHTML = ", " + word + " file will be downloaded automatically!";
         step3.appendChild(msg3);
     }
 }
@@ -414,7 +414,6 @@ function updateLivePreview(file, quality) {
             canvas.height = img.height;
             const ctx = canvas.getContext('2d');
             
-            // Improve image rendering quality
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0);
             
@@ -422,7 +421,6 @@ function updateLivePreview(file, quality) {
                 const previewUrl = URL.createObjectURL(blob);
                 const compressedPreview = document.getElementById('compressedPreview');
                 
-                // Clean up previous URL
                 if (compressedPreview.src.startsWith('blob:')) {
                     URL.revokeObjectURL(compressedPreview.src);
                 }
@@ -449,9 +447,21 @@ function handleTextCompression(file, step2, step3, codecObj) {
     fileReader.onload = function(e) {
         try {
             const text = e.target.result;
+            const originalSize = new Blob([text]).size;
             const [encodedString, outputMsg] = codecObj.encode(text);
+            const compressedSize = new Blob([encodedString]).size;
+            const ratio = (compressedSize / originalSize).toFixed(2);
+            const percentReduction = ((1 - ratio) * 100).toFixed(1);
+            
             myDownloadFile(file.name.split('.')[0] + "_compressed.txt", encodedString);
-            ondownloadChanges(outputMsg, step3);
+            
+            ondownloadChanges(
+                `Compression complete!<br>
+                 Original: ${formatBytes(originalSize)}<br>
+                 Compressed: ${formatBytes(compressedSize)}<br>
+                 Ratio: ${ratio}x (${percentReduction}% ${ratio < 1 ? 'smaller' : 'larger'})`,
+                step3
+            );
         } catch (error) {
             console.error("Compression error:", error);
             ondownloadChanges("Compression failed: " + error.message, step3);
@@ -508,7 +518,7 @@ function handleImageCompression(file, extension, step2, step3) {
                     `Compression complete!<br>
                      Original: ${formatBytes(originalSize)}<br>
                      Compressed: ${formatBytes(compressedSize)}<br>
-                     Ratio: ${ratio}x (${percentReduction}% smaller)`,
+                     Ratio: ${ratio}x (${percentReduction}% ${ratio < 1 ? 'smaller' : 'larger'})`,
                     step3
                 );
                 
@@ -533,8 +543,19 @@ function handleTextDecompression(file, step2, step3, codecObj) {
         try {
             const text = e.target.result;
             const [decodedString, outputMsg] = codecObj.decode(text);
+            const compressedSize = new Blob([text]).size;
+            const decompressedSize = new Blob([decodedString]).size;
+            const ratio = (decompressedSize / compressedSize).toFixed(2);
+            
             myDownloadFile(file.name.split('.')[0] + "_decompressed.txt", decodedString);
-            ondownloadChanges(outputMsg, step3);
+            
+            ondownloadChanges(
+                `Decompression complete!<br>
+                 Compressed: ${formatBytes(compressedSize)}<br>
+                 Decompressed: ${formatBytes(decompressedSize)}<br>
+                 Ratio: ${ratio}x`,
+                step3
+            );
         } catch (error) {
             console.error("Decompression error:", error);
             ondownloadChanges("Decompression failed: " + error.message, step3);
@@ -548,7 +569,6 @@ function handleTextDecompression(file, step2, step3, codecObj) {
 function initializeApp() {
     console.log("Initializing application...");
     
-    // Cache DOM elements
     const fileInput = document.getElementById('uploadfile');
     const encodeBtn = document.getElementById('encode');
     const decodeBtn = document.getElementById('decode');
@@ -560,7 +580,6 @@ function initializeApp() {
     const qualityValue = document.getElementById('qualityValue');
     const imageOptions = document.getElementById('imageCompressionOptions');
     
-    // Verify critical elements
     if (!fileInput || !encodeBtn || !decodeBtn || !submitBtn || !step1 || !step2 || !step3) {
         console.error("Missing critical elements");
         alert("System error: UI failed to load. Please refresh.");
@@ -584,14 +603,12 @@ function initializeApp() {
             isSubmitted = true;
             onclickChanges("Done!! File uploaded!", step1);
             
-            // Show/hide quality controls based on file type
             if (imageOptions) {
                 imageOptions.style.display = ['jpg', 'jpeg', 'png'].includes(extension) 
                     ? 'block' 
                     : 'none';
             }
             
-            // Show original image preview for images
             if (['jpg', 'jpeg', 'png'].includes(extension)) {
                 const originalPreview = document.getElementById('originalPreview');
                 if (originalPreview) {
@@ -608,7 +625,6 @@ function initializeApp() {
         qualitySlider.addEventListener('input', function() {
             qualityValue.textContent = this.value;
             
-            // Debounced preview update
             clearTimeout(previewTimeout);
             previewTimeout = setTimeout(() => {
                 if (currentImageFile && ['jpg', 'jpeg', 'png'].includes(currentImageFile.name.split('.').pop().toLowerCase())) {

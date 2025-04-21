@@ -240,7 +240,7 @@ class Codec {
         let tree_string = this.make_string(huffman_tree);
         let ts_length = tree_string.length;
         let final_string = ts_length.toString() + '#' + padding_length.toString() + '#' + tree_string + encoded_data;
-        let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (final_string.length/data.length);
+        let output_message = "Compression complete and file downloading...." + '\n' + "Compression Ratio : " + (data.length/final_string.length);
         return [final_string, output_message];
     }
 
